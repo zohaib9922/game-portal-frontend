@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>GamePortal — Free Browser Games</title>
+    <meta name="description" content="Play hundreds of free browser games instantly. No download, no login required." />
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.jsx"></script>
+    <script>
+      const canvas = document.createElement('canvas');
+      canvas.id = 'particle-canvas';
+      document.body.appendChild(canvas);
+      const ctx = canvas.getContext('2d');
+
+      function resize() {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+      }
+      resize();
+      window.addEventListener('resize', resize);
+
+      const particles = Array.from({ length: 80 }, () => ({
+        x: Math.random() * window.innerWidth,
+        y: Math.random() * window.innerHeight,
+        size: Math.random() * 3 + 1.5,
+        speed: Math.random() * 0.8 + 0.3,
+        opacity: Math.random() * 0.5 + 0.1,
+        t: Math.random() * Math.PI * 2,
+        spin: (Math.random() - 0.5) * 0.03
+      }));
+
+      function reset(p) {
+        p.x = Math.random() * canvas.width;
+        p.y = canvas.height + 10;
+        p.opacity = Math.random() * 0.5 + 0.1;
+        p.speed = Math.random() * 0.8 + 0.3;
+        p.size = Math.random() * 3 + 1.5;
+        p.t = Math.random() * Math.PI * 2;
+      }
+
+      function drawStar(x, y, size, angle) {
+        ctx.save();
+        ctx.translate(x, y);
+        ctx.rotate(angle);
+        ctx.beginPath();
+        for (let i = 0; i < 5; i++) {
+          const a = (i * 4 * Math.PI) / 5 - Math.PI / 2;
+          const r = i % 2 === 0 ? size : size * 0.4;
+          ctx[i === 0 ? 'moveTo' : 'lineTo'](Math.cos(a) * r, Math.sin(a) * r);
+        }
+        ctx.closePath();
+        ctx.fill();
+        ctx.restore();
+      }
+
+      (function loop() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        for (const p of particles) {
+          p.y -= p.speed;
+          p.t += p.spin;
+          if (p.y < -10) reset(p);
+          ctx.globalAlpha = p.opacity;
+          ctx.fillStyle = '#9eff52';
+          drawStar(p.x + Math.sin(p.t * 2) * 10, p.y, p.size, p.t);
+        }
+        ctx.globalAlpha = 1;
+        requestAnimationFrame(loop);
+      })();
+    </script>
+  </body>
+</html>
