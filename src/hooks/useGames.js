@@ -2,6 +2,8 @@ import { useState, useEffect, useCallback } from 'react';
 
 const API_BASE = 'https://game-portal-backend-production.up.railway.app/api';
 
+console.log("API BASE:", API_BASE);
+
 async function apiFetch(path, options = {}) {
   const res = await fetch(`${API_BASE}${path}`, {
     headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
